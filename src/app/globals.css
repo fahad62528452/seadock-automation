@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+:root {
+  --sidebar-width: 15.5rem;
+  --topbar-height: 3.5rem;
+  --background: #f4f5f7;
+  --surface: #ffffff;
+  --surface-muted: #f7f8fa;
+  --border: #e4e7ec;
+  --border-strong: #d0d5dd;
+  --ink: #1c2430;
+  --ink-secondary: #475467;
+  --ink-muted: #667085;
+  --primary: #1858c7;
+  --primary-hover: #1348a3;
+  --primary-subtle: #eef4ff;
+  --primary-text: #1849a9;
+  --warning: #b54708;
+}
+
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-ink: var(--ink);
+  --color-ink-secondary: var(--ink-secondary);
+  --color-ink-muted: var(--ink-muted);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-subtle: var(--primary-subtle);
+  --color-primary-text: var(--primary-text);
+  --color-warning: var(--warning);
+}
+
+body {
+  background: var(--background);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+button,
+a,
+input {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}

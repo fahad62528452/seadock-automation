@@ -1,0 +1,17 @@
+# SeaDock Supabase project config.
+# Link a remote project with: npx supabase link --project-ref <ref>
+# Apply migrations with: npm run db:push
+
+project_id = "seadock"
+
+[api]
+enabled = true
+
+[db]
+major_version = 15
+
+[db.migrations]
+schema_paths = []
+
+[studio]
+enabled = true
