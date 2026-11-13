@@ -10,7 +10,7 @@ export function InventorySummaryCards({
   showRawProcessed?: boolean;
 }) {
   return (
-    <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4">
+    <div className="grid grid-cols-2 gap-2 md:grid-cols-4 xl:grid-cols-4">
       <StatCard
         label="Total on hand"
         value={formatKg(summary.totalQuantity)}

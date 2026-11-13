@@ -9,7 +9,7 @@ import { Can } from "@/components/auth/can";
 import { PriorityBadge } from "@/components/customer-orders/priority-badge";
 import { CustomerPoStatusForm } from "@/components/customer-orders/customer-po-status-form";
 import { CustomerPoStatusWorkflow } from "@/components/customer-orders/status-workflow";
-import { Alert, PageHeader, StatusBadge } from "@/components/ui/form";
+import { Alert, PageActions, StatusBadge } from "@/components/ui/form";
 import { Panel } from "@/components/ui/panel";
 import { labelCustomerPoStatus } from "@/lib/customer-order-labels";
 import { formatQuantity } from "@/lib/procurement-labels";
@@ -17,6 +17,7 @@ import { formatTimestamp } from "@/lib/format";
 import { PERMISSIONS } from "@/lib/permissions";
 import { labelAllocationStatus, labelFulfilmentStatus } from "@/lib/fulfillment-labels";
 import { labelQaqcResult } from "@/lib/procurement-labels";
+import { toneForStatusLabel } from "@/lib/status-tones";
 import { getCustomerPurchaseOrder } from "@/services/customer-orders/customer-order-service";
 import { getCustomerPoFulfillmentDetail } from "@/services/fulfillment/fulfillment-service";
 
@@ -45,21 +46,28 @@ export default async function CustomerPoDetailPage({
   const changePriority = updateCustomerPoPriorityAction.bind(null, po.id);
 
   return (
-    <div className="space-y-4">
-      <PageHeader
-        title={po.poNumber}
-        description="Customer purchase order from intake through allocation, final QAQC, and dispatch."
-        actions={
-          canFulfil ? (
-            <Link
-              href={`/customer-orders/${po.id}/fulfill`}
-              className="inline-flex h-9 items-center rounded-md bg-primary px-3 text-[13px] font-medium text-white hover:bg-primary-hover"
-            >
-              {po.status === "fulfilled" ? "View Fulfilment" : "Allocate / Fulfil"}
-            </Link>
-          ) : null
-        }
-      />
+    <div className="space-y-3">
+      <div className="sticky top-0 z-[5] -mx-3 border-b border-border bg-background/95 px-3 py-2 backdrop-blur sm:-mx-5 sm:px-5">
+        <PageActions
+          description={`${po.customerCode ? `${po.customerCode} · ` : ""}${po.customerName}`}
+          actions={
+            <div className="flex flex-wrap items-center gap-2">
+              <PriorityBadge priority={po.priority} />
+              <StatusBadge tone={toneForStatusLabel(labelCustomerPoStatus(po.status))}>
+                {labelCustomerPoStatus(po.status)}
+              </StatusBadge>
+              {canFulfil ? (
+                <Link
+                  href={`/customer-orders/${po.id}/fulfill`}
+                  className="inline-flex h-8 items-center rounded-md bg-primary px-3 text-[13px] font-medium text-white hover:bg-primary-hover"
+                >
+                  {po.status === "fulfilled" ? "View Fulfilment" : "Allocate / Fulfil"}
+                </Link>
+              ) : null}
+            </div>
+          }
+        />
+      </div>
 
       {query.created ? <Alert tone="success">Customer purchase order created successfully.</Alert> : null}
       {query.status ? <Alert tone="success">Customer PO status updated.</Alert> : null}
@@ -74,10 +82,10 @@ export default async function CustomerPoDetailPage({
       ) : null}
 
       <Panel>
-        <div className="flex flex-wrap items-start justify-between gap-3 border-b border-border px-4 py-4">
+        <div className="flex flex-wrap items-start justify-between gap-3 border-b border-border px-3 py-3 sm:px-4">
           <div>
-            <p className="text-[12px] text-ink-muted uppercase tracking-wide">Customer</p>
-            <p className="mt-1 text-[15px] font-semibold text-ink">
+            <p className="text-[11px] tracking-wide text-ink-muted uppercase">Customer</p>
+            <p className="mt-0.5 text-[14px] font-semibold text-ink">
               {po.customerId ? (
                 <Link href={`/customers/${po.customerId}`} className="text-primary-text hover:underline">
                   {po.customerCode} · {po.customerName}
@@ -87,12 +95,8 @@ export default async function CustomerPoDetailPage({
               )}
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <PriorityBadge priority={po.priority} />
-            <StatusBadge>{labelCustomerPoStatus(po.status)}</StatusBadge>
-          </div>
         </div>
-        <dl className="grid gap-4 p-4 sm:grid-cols-2 lg:grid-cols-4 text-[13px]">
+        <dl className="grid gap-3 p-3 text-[13px] sm:grid-cols-2 sm:px-4 lg:grid-cols-4">
           <div>
             <dt className="text-[12px] text-ink-muted">PO Number</dt>
             <dd className="mt-1 font-medium">{po.poNumber}</dd>
@@ -217,7 +221,9 @@ export default async function CustomerPoDetailPage({
                     <td className="px-4 py-2 whitespace-nowrap">{formatQuantity(allocation.allocatedQuantity, allocation.unit)}</td>
                     <td className="px-4 py-2 whitespace-nowrap">{formatQuantity(allocation.fulfilledQuantity, allocation.unit)}</td>
                     <td className="px-4 py-2">
-                      <StatusBadge>{labelAllocationStatus(allocation.status)}</StatusBadge>
+                      <StatusBadge tone={toneForStatusLabel(labelAllocationStatus(allocation.status))}>
+                        {labelAllocationStatus(allocation.status)}
+                      </StatusBadge>
                     </td>
                     <td className="px-4 py-2">{allocation.fulfilmentNumber ?? "—"}</td>
                   </tr>
@@ -249,7 +255,9 @@ export default async function CustomerPoDetailPage({
                   <tr key={fulfilment.id} className="border-b border-border last:border-0">
                     <td className="px-4 py-2 font-medium">{fulfilment.fulfilmentNumber}</td>
                     <td className="px-4 py-2">
-                      <StatusBadge>{labelFulfilmentStatus(fulfilment.status)}</StatusBadge>
+                      <StatusBadge tone={toneForStatusLabel(labelFulfilmentStatus(fulfilment.status))}>
+                        {labelFulfilmentStatus(fulfilment.status)}
+                      </StatusBadge>
                     </td>
                     <td className="px-4 py-2">{labelQaqcResult(fulfilment.finalQaqc?.result ?? null)}</td>
                     <td className="px-4 py-2 whitespace-nowrap">

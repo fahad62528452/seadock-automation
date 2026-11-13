@@ -14,13 +14,14 @@ import {
   DispatchForm,
   FinalQaqcForm,
 } from "@/components/customer-orders/fulfillment-forms";
-import { Alert, PageHeader, StatusBadge } from "@/components/ui/form";
+import { Alert, PageActions, StatusBadge } from "@/components/ui/form";
 import { Panel } from "@/components/ui/panel";
 import { labelCustomerPoStatus } from "@/lib/customer-order-labels";
 import { formatTimestamp } from "@/lib/format";
 import { labelFulfilmentStatus, labelInventoryType } from "@/lib/fulfillment-labels";
 import { PERMISSIONS } from "@/lib/permissions";
 import { formatQuantity, labelQaqcResult } from "@/lib/procurement-labels";
+import { toneForStatusLabel } from "@/lib/status-tones";
 import { getFulfilmentWorkspace } from "@/services/fulfillment/fulfillment-service";
 
 const DONE_MESSAGES: Record<string, string> = {
@@ -59,50 +60,59 @@ export default async function FulfilmentWorkspacePage({
   const blocked = !workspace.canDispatch && qaqcOpen;
 
   return (
-    <div className="space-y-4">
-      <PageHeader
-        title={workspace.fulfilmentNumber}
-        description={`${workspace.customerCode} · ${workspace.customerName} · PO ${workspace.poNumber}`}
-        actions={
-          <div className="flex flex-wrap gap-2">
-            <Link
-              href={`/customer-orders/${workspace.customerPoId}/fulfill`}
-              className="inline-flex h-9 items-center rounded-md border border-border bg-surface px-3 text-[13px] font-medium text-ink hover:bg-surface-muted"
-            >
-              PO fulfilment
-            </Link>
-            <Link
-              href="/fulfilment"
-              className="inline-flex h-9 items-center rounded-md border border-border bg-surface px-3 text-[13px] font-medium text-ink hover:bg-surface-muted"
-            >
-              Operations board
-            </Link>
-          </div>
-        }
-      />
+    <div className="space-y-3">
+      <div className="sticky top-0 z-[5] -mx-3 border-b border-border bg-background/95 px-3 py-2 backdrop-blur sm:-mx-5 sm:px-5">
+        <PageActions
+          description={`${workspace.customerCode} · ${workspace.customerName} · PO ${workspace.poNumber}`}
+          actions={
+            <div className="flex flex-wrap items-center gap-2">
+              <StatusBadge tone={toneForStatusLabel(labelFulfilmentStatus(workspace.status))}>
+                {labelFulfilmentStatus(workspace.status)}
+              </StatusBadge>
+              <PriorityBadge priority={workspace.priority} />
+              <Link
+                href={`/customer-orders/${workspace.customerPoId}/fulfill`}
+                className="inline-flex h-8 items-center rounded-md border border-border bg-surface px-3 text-[13px] font-medium text-ink hover:bg-surface-muted"
+              >
+                PO fulfilment
+              </Link>
+              <Link
+                href="/fulfilment"
+                className="inline-flex h-8 items-center rounded-md border border-border bg-surface px-3 text-[13px] font-medium text-ink hover:bg-surface-muted"
+              >
+                Board
+              </Link>
+            </div>
+          }
+        />
+      </div>
 
       {DONE_MESSAGES[doneKey] ? <Alert tone="success">{DONE_MESSAGES[doneKey]}</Alert> : null}
 
       <Panel>
-        <dl className="grid gap-4 p-4 text-[13px] sm:grid-cols-2 lg:grid-cols-4">
+        <dl className="grid gap-3 p-3 text-[13px] sm:grid-cols-2 sm:px-4 lg:grid-cols-4">
           <div>
-            <dt className="text-[12px] text-ink-muted">Customer PO</dt>
-            <dd className="mt-1 font-semibold">
+            <dt className="text-[11px] text-ink-muted">Customer PO</dt>
+            <dd className="mt-0.5 font-semibold">
               <Link href={`/customer-orders/${workspace.customerPoId}`} className="text-primary-text hover:underline">
                 {workspace.poNumber}
               </Link>
             </dd>
           </div>
           <div>
-            <dt className="text-[12px] text-ink-muted">PO status</dt>
-            <dd className="mt-1">
-              <StatusBadge>{labelCustomerPoStatus(workspace.poStatus)}</StatusBadge>
+            <dt className="text-[11px] text-ink-muted">PO status</dt>
+            <dd className="mt-0.5">
+              <StatusBadge tone={toneForStatusLabel(labelCustomerPoStatus(workspace.poStatus))}>
+                {labelCustomerPoStatus(workspace.poStatus)}
+              </StatusBadge>
             </dd>
           </div>
           <div>
-            <dt className="text-[12px] text-ink-muted">Fulfilment status</dt>
-            <dd className="mt-1">
-              <StatusBadge>{labelFulfilmentStatus(workspace.status)}</StatusBadge>
+            <dt className="text-[11px] text-ink-muted">Fulfilment status</dt>
+            <dd className="mt-0.5">
+              <StatusBadge tone={toneForStatusLabel(labelFulfilmentStatus(workspace.status))}>
+                {labelFulfilmentStatus(workspace.status)}
+              </StatusBadge>
             </dd>
           </div>
           <div>

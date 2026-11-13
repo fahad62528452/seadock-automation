@@ -9,9 +9,9 @@ const toneClass: Record<StatusTone, string> = {
 
 export function StatusText({ label, tone }: { label: string; tone: StatusTone }) {
   return (
-    <span className="inline-flex items-center gap-2 whitespace-nowrap">
-      <span className={cn("size-1.5 rounded-full", toneClass[tone])} aria-hidden="true" />
-      <span>{label}</span>
+    <span className="inline-flex items-center gap-1.5 whitespace-nowrap text-[13px]">
+      <span className={cn("size-1.5 shrink-0 rounded-full", toneClass[tone])} aria-hidden="true" />
+      <span className="text-ink-secondary">{label}</span>
     </span>
   );
 }

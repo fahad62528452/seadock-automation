@@ -1,10 +1,14 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { Suspense, useEffect, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { Sidebar } from "@/components/layout/sidebar";
 import { TopBar, type ShellUser } from "@/components/layout/top-bar";
 import type { NotificationPreview } from "@/types/dashboard";
+
+function SidebarFallback() {
+  return <div className="h-full w-[var(--sidebar-width)] bg-surface" aria-hidden />;
+}
 
 export function AppShell({
   user,
@@ -42,15 +46,19 @@ export function AppShell({
         Skip to content
       </a>
 
-      <div className="hidden h-full shrink-0 border-r border-border lg:block">
-        <Sidebar pathname={pathname} />
+      <div className="hidden h-full shrink-0 lg:block">
+        <Suspense fallback={<SidebarFallback />}>
+          <Sidebar pathname={pathname} />
+        </Suspense>
       </div>
 
       {mobileOpen ? (
         <div className="fixed inset-0 z-40 lg:hidden">
           <button type="button" className="absolute inset-0 bg-black/40" aria-label="Close navigation" onClick={() => setMobileOpen(false)} />
           <div className="relative h-full w-[var(--sidebar-width)] shadow-lg">
-            <Sidebar pathname={pathname} onNavigate={() => setMobileOpen(false)} />
+            <Suspense fallback={<SidebarFallback />}>
+              <Sidebar pathname={pathname} onNavigate={() => setMobileOpen(false)} />
+            </Suspense>
           </div>
         </div>
       ) : null}
@@ -62,7 +70,7 @@ export function AppShell({
           notifications={notifications}
           onOpenNavigation={() => setMobileOpen(true)}
         />
-        <main id="main" tabIndex={-1} className="flex-1 overflow-y-auto px-4 py-5 outline-none sm:px-6">
+        <main id="main" tabIndex={-1} className="flex-1 overflow-y-auto px-3 py-3 outline-none sm:px-5 sm:py-4">
           {children}
         </main>
       </div>

@@ -3,9 +3,10 @@ import { connection } from "next/server";
 import { Can } from "@/components/auth/can";
 import { FreezeInventoryForm } from "@/components/inventory/freeze-inventory-form";
 import { InventoryFilters } from "@/components/inventory/inventory-filters";
+import { InventoryModuleTabs } from "@/components/inventory/inventory-module-tabs";
 import { InventorySummaryCards } from "@/components/inventory/inventory-summary-cards";
 import { InventoryTable } from "@/components/inventory/inventory-table";
-import { Alert, PageHeader } from "@/components/ui/form";
+import { Alert, PageActions } from "@/components/ui/form";
 import { Panel } from "@/components/ui/panel";
 import { parseInventorySearchParams } from "@/lib/inventory-page-params";
 import { getNavItem } from "@/lib/navigation";
@@ -33,9 +34,8 @@ export default async function FreshInventoryPage({
   ]);
 
   return (
-    <div className="space-y-4">
-      <PageHeader
-        title={nav.label}
+    <div className="space-y-3">
+      <PageActions
         description={nav.description}
         actions={
           <Can permission={PERMISSIONS.inventoryManage}>
@@ -43,6 +43,7 @@ export default async function FreshInventoryPage({
           </Can>
         }
       />
+      <InventoryModuleTabs pathname="/inventory/fresh" />
 
       {params.frozen ? (
         <Alert tone="success">Eligible fresh stock has been moved to frozen inventory.</Alert>

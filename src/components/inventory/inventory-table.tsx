@@ -10,6 +10,7 @@ import {
   labelLifecycle,
 } from "@/lib/inventory-labels";
 import { formatQuantity } from "@/lib/procurement-labels";
+import { toneForStatusLabel } from "@/lib/status-tones";
 import type { InventoryListItem } from "@/types/inventory";
 
 export type InventoryTableOptions = {
@@ -87,12 +88,20 @@ export function InventoryTable({
         {
           id: "lifecycle",
           header: "Lifecycle",
-          cell: (row) => <StatusBadge>{labelLifecycle(row.lifecycle)}</StatusBadge>,
+          cell: (row) => (
+            <StatusBadge tone={toneForStatusLabel(labelLifecycle(row.lifecycle))}>
+              {labelLifecycle(row.lifecycle)}
+            </StatusBadge>
+          ),
         },
         {
           id: "status",
           header: "Status",
-          cell: (row) => <StatusBadge>{labelInventoryItemStatus(row.status)}</StatusBadge>,
+          cell: (row) => (
+            <StatusBadge tone={toneForStatusLabel(labelInventoryItemStatus(row.status))}>
+              {labelInventoryItemStatus(row.status)}
+            </StatusBadge>
+          ),
         },
         {
           id: "origin",
@@ -120,7 +129,9 @@ export function InventoryTable({
               return (
                 <span className="inline-flex flex-wrap items-center gap-1">
                   <span>{formatTimestamp(row.freshUntil)}</span>
-                  <StatusBadge>{freshWindowLabel(windowStatus)}</StatusBadge>
+                  <StatusBadge tone={toneForStatusLabel(freshWindowLabel(windowStatus))}>
+                    {freshWindowLabel(windowStatus)}
+                  </StatusBadge>
                 </span>
               );
             }

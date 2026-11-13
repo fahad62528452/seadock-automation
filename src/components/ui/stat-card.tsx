@@ -1,34 +1,40 @@
 import Link from "next/link";
+import { cn } from "@/lib/cn";
 
 export function StatCard({
   label,
   value,
   detail,
   href,
+  emphasis = false,
 }: {
   label: string;
   value: string;
-  detail: string;
+  detail?: string;
   href?: string;
+  emphasis?: boolean;
 }) {
   const content = (
     <>
-      <h3 className="text-[12px] font-medium text-ink-muted">{label}</h3>
-      <p className="mt-1 text-[20px] font-semibold tracking-tight text-ink tabular-nums">{value}</p>
-      <p className="mt-1 text-[12px] leading-4 text-ink-secondary">{detail}</p>
+      <p className="text-[20px] font-semibold tracking-tight text-ink tabular-nums leading-6">{value}</p>
+      <h3 className="mt-1 text-[12px] font-medium text-ink-secondary">{label}</h3>
+      {detail ? <p className="mt-0.5 text-[11px] leading-4 text-ink-muted">{detail}</p> : null}
     </>
+  );
+
+  const className = cn(
+    "block rounded-md border bg-surface px-3 py-2.5 transition-colors",
+    emphasis ? "border-primary/30 bg-primary-subtle/40" : "border-border",
+    href && "hover:border-border-strong hover:bg-surface-muted",
   );
 
   if (href) {
     return (
-      <Link
-        href={href}
-        className="rounded-md border border-border bg-surface px-3.5 py-3 transition-colors hover:border-border-strong hover:bg-surface-muted"
-      >
+      <Link href={href} className={className}>
         {content}
       </Link>
     );
   }
 
-  return <article className="rounded-md border border-border bg-surface px-3.5 py-3">{content}</article>;
+  return <article className={className}>{content}</article>;
 }

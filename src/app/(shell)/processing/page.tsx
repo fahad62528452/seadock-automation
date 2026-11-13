@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Can } from "@/components/auth/can";
-import { Alert, PageHeader, StatusBadge } from "@/components/ui/form";
+import { Alert, PageActions, StatusBadge } from "@/components/ui/form";
+import { toneForStatusLabel } from "@/lib/status-tones";
 import { DataTable } from "@/components/ui/data-table";
 import { Panel } from "@/components/ui/panel";
 import { PERMISSIONS } from "@/lib/permissions";
@@ -22,15 +23,14 @@ export default async function ProcessingPage({
   const runs = await listProcessingRuns();
 
   return (
-    <div>
-      <PageHeader
-        title="Processing"
+    <div className="space-y-3">
+      <PageActions
         description="Convert parent-batch raw inventory into processed yield and wastage while preserving batch traceability."
         actions={
           <Can permission={PERMISSIONS.processingManage}>
             <Link
               href="/processing/new"
-              className="inline-flex h-9 items-center rounded-md bg-primary px-3 text-[13px] font-medium text-white hover:bg-primary-hover"
+              className="inline-flex h-8 items-center rounded-md bg-primary px-3 text-[13px] font-medium text-white hover:bg-primary-hover"
             >
               New Processing Run
             </Link>
@@ -112,7 +112,11 @@ export default async function ProcessingPage({
             {
               id: "status",
               header: "Status",
-              cell: (row) => <StatusBadge>{labelProcessingStatus(row.status)}</StatusBadge>,
+              cell: (row) => (
+                <StatusBadge tone={toneForStatusLabel(labelProcessingStatus(row.status))}>
+                  {labelProcessingStatus(row.status)}
+                </StatusBadge>
+              ),
             },
             {
               id: "qaqc",

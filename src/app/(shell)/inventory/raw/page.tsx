@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { connection } from "next/server";
 import { InventoryFilters } from "@/components/inventory/inventory-filters";
+import { InventoryModuleTabs } from "@/components/inventory/inventory-module-tabs";
 import { InventorySummaryCards } from "@/components/inventory/inventory-summary-cards";
 import { InventoryTable } from "@/components/inventory/inventory-table";
-import { PageHeader } from "@/components/ui/form";
+import { PageActions } from "@/components/ui/form";
 import { Panel } from "@/components/ui/panel";
 import { parseInventorySearchParams } from "@/lib/inventory-page-params";
 import { getNavItem } from "@/lib/navigation";
@@ -30,16 +31,13 @@ export default async function RawInventoryPage({
   ]);
 
   return (
-    <div className="space-y-4">
-      <PageHeader title={nav.label} description={nav.description} />
+    <div className="space-y-3">
+      <PageActions description={nav.description} />
+      <InventoryModuleTabs pathname="/inventory/raw" />
       <InventorySummaryCards summary={summary} showRawProcessed={false} />
       <Panel>
         <InventoryFilters search={search} lifecycle={lifecycle} lockInventoryType="raw" />
-        <InventoryTable
-          rows={rows}
-          emptyTitle={nav.emptyTitle}
-          emptyDescription={nav.description}
-        />
+        <InventoryTable rows={rows} emptyTitle={nav.emptyTitle} emptyDescription={nav.description} />
       </Panel>
     </div>
   );

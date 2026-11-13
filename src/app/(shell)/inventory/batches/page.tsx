@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { connection } from "next/server";
-import { PageHeader, StatusBadge } from "@/components/ui/form";
+import { InventoryModuleTabs } from "@/components/inventory/inventory-module-tabs";
+import { PageActions, StatusBadge } from "@/components/ui/form";
 import { DataTable } from "@/components/ui/data-table";
 import { Panel } from "@/components/ui/panel";
 import { formatTimestamp } from "@/lib/format";
 import { freshWindowLabel } from "@/lib/fresh-window";
 import { formatQuantity } from "@/lib/procurement-labels";
+import { toneForStatusLabel } from "@/lib/status-tones";
 import { listBatches } from "@/services/procurement/procurement-service";
 import type { BatchListItem } from "@/types/procurement";
 
@@ -15,17 +17,13 @@ export const metadata: Metadata = {
 };
 
 export default async function BatchesPage() {
-  // Fresh Status uses getFreshWindowStatus(receivedAt) → new Date() (2-day / approaching rules).
-  // Request-time rendering is required; Next may warn that navigation is not instant.
   await connection();
   const batches = await listBatches();
 
   return (
-    <div>
-      <PageHeader
-        title="Batches"
-        description="Parent batch identities created after incoming QAQC. The batch number continues through downstream operations."
-      />
+    <div className="space-y-3">
+      <PageActions description="Parent batch identities used through receiving, processing, and fulfilment." />
+      <InventoryModuleTabs pathname="/inventory/batches" />
       <Panel>
         <DataTable<BatchListItem>
           caption="Batches"
@@ -67,12 +65,16 @@ export default async function BatchesPage() {
             {
               id: "fresh",
               header: "Fresh Status",
-              cell: (row) => <StatusBadge>{freshWindowLabel(row.freshStatus)}</StatusBadge>,
+              cell: (row) => (
+                <StatusBadge tone={toneForStatusLabel(freshWindowLabel(row.freshStatus))}>
+                  {freshWindowLabel(row.freshStatus)}
+                </StatusBadge>
+              ),
             },
           ]}
           rows={batches}
           getRowKey={(row) => row.id}
-          emptyTitle="No batches yet."
+          emptyTitle="No batches yet"
           emptyDescription="Batches appear after goods are received and incoming QAQC is accepted."
         />
       </Panel>

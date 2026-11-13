@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --sidebar-width: 15.5rem;
-  --topbar-height: 3.5rem;
+  --sidebar-width: 15rem;
+  --topbar-height: 3.25rem;
   --background: #f4f5f7;
   --surface: #ffffff;
   --surface-muted: #f7f8fa;
@@ -16,6 +16,11 @@
   --primary-subtle: #eef4ff;
   --primary-text: #1849a9;
   --warning: #b54708;
+  --warning-subtle: #fff6ed;
+  --success: #067647;
+  --success-subtle: #ecfdf3;
+  --danger: #b42318;
+  --danger-subtle: #fef3f2;
 }
 
 @theme inline {
@@ -33,13 +38,18 @@
   --color-primary-subtle: var(--primary-subtle);
   --color-primary-text: var(--primary-text);
   --color-warning: var(--warning);
+  --color-warning-subtle: var(--warning-subtle);
+  --color-success: var(--success);
+  --color-success-subtle: var(--success-subtle);
+  --color-danger: var(--danger);
+  --color-danger-subtle: var(--danger-subtle);
 }
 
 body {
   background: var(--background);
   color: var(--ink);
-  font-size: 14px;
-  line-height: 1.45;
+  font-size: 13px;
+  line-height: 1.4;
 }
 
 button,

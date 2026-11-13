@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Can } from "@/components/auth/can";
 import { PriorityBadge } from "@/components/customer-orders/priority-badge";
-import { Alert, PageHeader, StatusBadge } from "@/components/ui/form";
+import { Alert, Button, PageActions, StatusBadge } from "@/components/ui/form";
 import { DataTable } from "@/components/ui/data-table";
+import { ListToolbar } from "@/components/ui/list-toolbar";
 import { Panel } from "@/components/ui/panel";
 import { labelCustomerPoStatus } from "@/lib/customer-order-labels";
 import { formatTimestamp } from "@/lib/format";
 import { PERMISSIONS } from "@/lib/permissions";
+import { toneForStatusLabel } from "@/lib/status-tones";
 import { listCustomerPurchaseOrders } from "@/services/customer-orders/customer-order-service";
 import type { CustomerPoListItem } from "@/types/customer-orders";
 
@@ -36,15 +38,14 @@ export default async function CustomerOrdersPage({
   });
 
   return (
-    <div>
-      <PageHeader
-        title="Customer Purchase Orders"
+    <div className="space-y-3">
+      <PageActions
         description="Receive, approve, allocate, fulfil, and dispatch customer demand."
         actions={
           <Can permission={PERMISSIONS.customerOrdersCreate}>
             <Link
               href="/customer-orders/new"
-              className="inline-flex h-9 items-center rounded-md bg-primary px-3 text-[13px] font-medium text-white hover:bg-primary-hover"
+              className="inline-flex h-8 items-center rounded-md bg-primary px-3 text-[13px] font-medium text-white hover:bg-primary-hover"
             >
               Create Customer PO
             </Link>
@@ -52,66 +53,73 @@ export default async function CustomerOrdersPage({
         }
       />
 
-      {params.created ? (
-        <div className="mb-4">
-          <Alert tone="success">Customer purchase order created successfully.</Alert>
-        </div>
-      ) : null}
+      {params.created ? <Alert tone="success">Customer purchase order created successfully.</Alert> : null}
 
       <Panel>
-        <form className="flex flex-col gap-3 border-b border-border p-4 md:flex-row md:flex-wrap md:items-end">
-          <label className="min-w-[12rem] flex-1 text-[12px] font-medium text-ink">
-            Search
-            <input
-              name="q"
-              defaultValue={search}
-              placeholder="PO number or customer"
-              className="mt-1 h-9 w-full rounded-md border border-border bg-surface px-3 text-[13px]"
-            />
-          </label>
-          <label className="text-[12px] font-medium text-ink">
-            Status
-            <select name="status" defaultValue={status} className="mt-1 h-9 w-full rounded-md border border-border bg-surface px-3 text-[13px]">
-              <option value="">All</option>
-              <option value="received">Received</option>
-              <option value="under_review">Under Review</option>
-              <option value="action_required">Action Required</option>
-              <option value="approved">Approved</option>
-              <option value="partially_allocated">Partially Allocated</option>
-              <option value="ready_for_fulfillment">Ready for Fulfillment</option>
-              <option value="partially_fulfilled">Partially Fulfilled</option>
-              <option value="fulfilled">Fulfilled</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
-          </label>
-          <label className="text-[12px] font-medium text-ink">
-            Priority
-            <select
-              name="priority"
-              defaultValue={priority}
-              className="mt-1 h-9 w-full rounded-md border border-border bg-surface px-3 text-[13px]"
-            >
-              <option value="">All</option>
-              <option value="urgent">Urgent</option>
-              <option value="high">High</option>
-              <option value="normal">Normal</option>
-            </select>
-          </label>
-          <label className="flex items-center gap-2 pb-2 text-[13px] text-ink">
-            <input type="checkbox" name="action" value="required" defaultChecked={actionRequired} />
-            Action required
-          </label>
-          <label className="flex items-center gap-2 pb-2 text-[13px] text-ink">
-            <input type="checkbox" name="due" value="soon" defaultChecked={dueSoon} />
-            Due in 48 hours
-          </label>
-          <button
-            type="submit"
-            className="inline-flex h-9 items-center rounded-md border border-border bg-surface px-3 text-[13px] font-medium text-ink hover:bg-surface-muted"
+        <ListToolbar
+          resultCount={orders.length}
+          resultLabel="orders"
+          actions={
+            <Button type="submit" form="customer-po-filters" variant="secondary">
+              Apply
+            </Button>
+          }
+        >
+          <form
+            id="customer-po-filters"
+            className="flex flex-col gap-2 md:flex-row md:flex-wrap md:items-end"
           >
-            Apply filters
-          </button>
-        </form>
+            <label className="min-w-[10rem] flex-1 text-[11px] font-medium text-ink-muted">
+              Search
+              <input
+                name="q"
+                defaultValue={search}
+                placeholder="PO number or customer"
+                className="mt-1 h-8 w-full rounded-md border border-border bg-surface px-2.5 text-[13px]"
+              />
+            </label>
+            <label className="text-[11px] font-medium text-ink-muted">
+              Status
+              <select
+                name="status"
+                defaultValue={status}
+                className="mt-1 h-8 w-full rounded-md border border-border bg-surface px-2.5 text-[13px]"
+              >
+                <option value="">All</option>
+                <option value="received">Received</option>
+                <option value="under_review">Under Review</option>
+                <option value="action_required">Action Required</option>
+                <option value="approved">Approved</option>
+                <option value="partially_allocated">Partially Allocated</option>
+                <option value="ready_for_fulfillment">Ready for Fulfillment</option>
+                <option value="partially_fulfilled">Partially Fulfilled</option>
+                <option value="fulfilled">Fulfilled</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </label>
+            <label className="text-[11px] font-medium text-ink-muted">
+              Priority
+              <select
+                name="priority"
+                defaultValue={priority}
+                className="mt-1 h-8 w-full rounded-md border border-border bg-surface px-2.5 text-[13px]"
+              >
+                <option value="">All</option>
+                <option value="urgent">Urgent</option>
+                <option value="high">High</option>
+                <option value="normal">Normal</option>
+              </select>
+            </label>
+            <label className="flex items-center gap-2 pb-1.5 text-[12px] text-ink">
+              <input type="checkbox" name="action" value="required" defaultChecked={actionRequired} />
+              Action required
+            </label>
+            <label className="flex items-center gap-2 pb-1.5 text-[12px] text-ink">
+              <input type="checkbox" name="due" value="soon" defaultChecked={dueSoon} />
+              Due in 48h
+            </label>
+          </form>
+        </ListToolbar>
 
         <DataTable<CustomerPoListItem>
           caption="Customer purchase orders"
@@ -136,49 +144,56 @@ export default async function CustomerOrdersPage({
                 </span>
               ),
             },
-            { id: "poDate", header: "PO Date", className: "whitespace-nowrap", cell: (row) => row.poDate ?? "—" },
+            {
+              id: "required",
+              header: "Required",
+              className: "whitespace-nowrap",
+              cell: (row) => row.requiredDeliveryDate ?? "—",
+            },
             {
               id: "received",
               header: "Received",
-              className: "whitespace-nowrap",
+              className: "whitespace-nowrap text-ink-muted",
               cell: (row) => formatTimestamp(row.receivedAt),
-            },
-            {
-              id: "required",
-              header: "Required Delivery",
-              className: "whitespace-nowrap",
-              cell: (row) => row.requiredDeliveryDate ?? "—",
             },
             {
               id: "priority",
               header: "Priority",
               cell: (row) => <PriorityBadge priority={row.priority} />,
             },
-            { id: "items", header: "Items", className: "whitespace-nowrap", cell: (row) => String(row.itemCount) },
+            {
+              id: "items",
+              header: "Items",
+              className: "whitespace-nowrap tabular-nums",
+              cell: (row) => String(row.itemCount),
+            },
             {
               id: "status",
               header: "Status",
               cell: (row) => (
                 <span className="inline-flex flex-wrap items-center gap-1">
-                  <StatusBadge>{labelCustomerPoStatus(row.status)}</StatusBadge>
-                  {row.actionRequired ? <StatusBadge>Action Required</StatusBadge> : null}
+                  <StatusBadge tone={toneForStatusLabel(labelCustomerPoStatus(row.status))}>
+                    {labelCustomerPoStatus(row.status)}
+                  </StatusBadge>
+                  {row.actionRequired ? <StatusBadge tone="danger">Action Required</StatusBadge> : null}
                 </span>
-              ),
-            },
-            {
-              id: "actions",
-              header: "Actions",
-              cell: (row) => (
-                <Link href={`/customer-orders/${row.id}`} className="text-primary-text hover:underline">
-                  View
-                </Link>
               ),
             },
           ]}
           rows={orders}
           getRowKey={(row) => row.id}
-          emptyTitle="No customer purchase orders found."
-          emptyDescription="Create a customer PO manually to begin intake. Email ingestion will connect later."
+          emptyTitle="No customer purchase orders"
+          emptyDescription="Create a customer PO to begin intake."
+          emptyAction={
+            <Can permission={PERMISSIONS.customerOrdersCreate}>
+              <Link
+                href="/customer-orders/new"
+                className="inline-flex h-8 items-center rounded-md bg-primary px-3 text-[13px] font-medium text-white hover:bg-primary-hover"
+              >
+                Create Customer PO
+              </Link>
+            </Can>
+          }
         />
       </Panel>
     </div>

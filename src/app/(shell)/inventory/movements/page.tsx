@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
+import { InventoryModuleTabs } from "@/components/inventory/inventory-module-tabs";
 import { InventoryMovementsTable } from "@/components/inventory/inventory-movements-table";
-import { PageHeader } from "@/components/ui/form";
+import { PageActions } from "@/components/ui/form";
 import { Panel } from "@/components/ui/panel";
 import { getNavItem } from "@/lib/navigation";
 import { listInventoryMovements } from "@/services/inventory/inventory-service";
@@ -12,12 +13,12 @@ export const metadata: Metadata = {
 };
 
 export default async function InventoryMovementsPage() {
-  // Movement history uses stored performed_at values only — no request-time clock.
   const movements = await listInventoryMovements({ limit: 200 });
 
   return (
-    <div className="space-y-4">
-      <PageHeader title={nav.label} description={nav.description} />
+    <div className="space-y-3">
+      <PageActions description={nav.description} />
+      <InventoryModuleTabs pathname="/inventory/movements" />
       <Panel>
         <InventoryMovementsTable
           rows={movements}
