@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { connection } from "next/server";
 import { PageActions } from "@/components/ui/form";
 import { OperationalFulfilmentBoardView } from "@/components/fulfilment/operational-board";
 import { getNavItem } from "@/lib/navigation";
@@ -20,12 +19,16 @@ const BUCKET_SET = new Set<OperationalFulfilmentBucket>([
   "completed",
 ]);
 
+/**
+ * Dynamic via `searchParams` (bucket filter) — a Request-time API under Cache Components.
+ * `connection()` is not needed: the board reads stored dates / mock store / Supabase only;
+ * it does not use request-time clocks or session APIs on this path.
+ */
 export default async function FulfilmentOperationsPage({
   searchParams,
 }: {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  await connection();
   const query = searchParams ? await searchParams : {};
   const bucketRaw = typeof query.bucket === "string" ? query.bucket : "";
   const board = await listOperationalFulfilments();
